@@ -96,9 +96,9 @@ void AAlgoPlayer::FindPath() {
 	//¿ÞÂÊ
 	AddOpen(FVector::LeftVector);
 	//¾Õ
-	
+	AddOpen(FVector::ForwardVector);
 	//µÚ
-
+	AddOpen(FVector::BackwardVector);
 }
 
 void AAlgoPlayer::AddOpen(FVector dir) {
