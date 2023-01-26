@@ -51,10 +51,14 @@ public:
 	TArray<class ACube*> openArray;
 	UPROPERTY(EditAnywhere)
 	TArray<class ACube*> closeArray;
+	UPROPERTY(EditAnywhere)
+	TArray<class ACube*> pathArray;
 
 	void FindPath();
 	void FindNear();
 	void AddOpen(FVector dir);
-
+	
+	float currTime = 0;
+	void SimpleMove();
 
 };

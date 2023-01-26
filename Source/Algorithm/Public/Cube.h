@@ -26,8 +26,21 @@ public:
 
 public:
 	float startCost = 0;;
-	float endCost = 0;
+	float goalCost = 0;
 	float totalCost = 0;
 
+	UPROPERTY(EditAnywhere)
+	class UBorder* outLine;
+	UPROPERTY(EditAnywhere)
+	class UTextBlock* textTotal;
+	UPROPERTY(EditAnywhere)
+	class UTextBlock* textStart;
+	UPROPERTY(EditAnywhere)
+	class UTextBlock* textGoal;
+	UPROPERTY(EditAnywhere)
+	class ACube* parentCube;
+
 	void SetCost(ACube* currCube, ACube* goalCube);
+	void SetColor(FLinearColor color);
+	void SetInit();
 };

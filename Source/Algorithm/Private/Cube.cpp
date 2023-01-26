@@ -2,6 +2,9 @@
 
 
 #include "Cube.h"
+#include <Components/WidgetComponent.h>
+#include <Components/TextBlock.h>
+#include <Components/Border.h>
 
 // Sets default values
 ACube::ACube()
@@ -15,7 +18,18 @@ ACube::ACube()
 void ACube::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//Widget Component를 가져오자
+	UWidgetComponent* widget = Cast<UWidgetComponent>(GetComponentByClass(UWidgetComponent::StaticClass()));
+	UUserWidget* userWidget = widget->GetUserWidgetObject();
+	//테두리 widget
+	outLine = Cast<UBorder>(userWidget->GetWidgetFromName(TEXT("OutLine")));
+	//totalCost widget
+	textTotal = Cast<UTextBlock>(userWidget->GetWidgetFromName(TEXT("Total")));
+	//startCost widget
+	textStart = Cast<UTextBlock>(userWidget->GetWidgetFromName(TEXT("byStart")));
+	//goalCost widget
+	textGoal = Cast<UTextBlock>(userWidget->GetWidgetFromName(TEXT("byGoal")));
 }
 
 // Called every frame
@@ -33,9 +47,35 @@ void ACube::SetCost(ACube* currCube, ACube* goalCube) {
 	//시작점 기준 비용
 	startCost = currCube->startCost + FMath::Abs(vCurr.X - vMy.X) + FMath::Abs(vCurr.Y - vMy.Y);
 	//도착점 기준 비용
-	endCost = currCube->endCost + FMath::Abs(vGoal.X - vMy.X) + FMath::Abs(vGoal.Y - vMy.Y);
+	goalCost = FMath::Abs(vGoal.X - vMy.X) + FMath::Abs(vGoal.Y - vMy.Y);
 	//최종 비용
-	totalCost = startCost + endCost;
+	totalCost = startCost + goalCost;
 
-	UE_LOG(LogTemp, Warning, TEXT("%s --> startCost: %f, endCost: %f, totalCost: %f"), *GetActorNameOrLabel(), startCost, endCost, totalCost);
+	//UI로 표현
+	textTotal->SetText(FText::AsNumber(totalCost));
+	textStart->SetText(FText::AsNumber(startCost));
+	textGoal->SetText(FText::AsNumber(goalCost));
+
+	//테두리를 파랑색으로 바꾸자
+	SetColor(FLinearColor::Blue);
+
+	//누구를 기준으로 Cost를 계산했냐? (부모)
+	parentCube = currCube;
+
+	UE_LOG(LogTemp, Warning, TEXT("%s --> startCost: %f, goalCost: %f, totalCost: %f"), *GetActorNameOrLabel(), startCost, goalCost, totalCost);
+}
+
+void ACube::SetColor(FLinearColor color) {
+	outLine->SetBrushColor(color);
+}
+
+void ACube::SetInit() {
+	SetColor(FLinearColor::Black);
+	parentCube = nullptr;
+	//거리 비용 계산 초기화
+	totalCost = startCost = goalCost = 0;
+
+	textTotal->SetText(FText::AsNumber(totalCost));
+	textStart->SetText(FText::AsNumber(startCost));
+	textGoal->SetText(FText::AsNumber(goalCost));
 }
